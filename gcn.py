@@ -4,8 +4,6 @@ from tensorflow.keras import activations
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Layer, Dense
 
-from utils.sparse_molecular_dataset import SparseMolecularDataset
-from utils.utils import *
 
 import os
 

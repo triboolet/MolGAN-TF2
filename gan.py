@@ -8,12 +8,13 @@ import numpy as np
 import loss
 import matplotlib.pyplot as plt
 
-from utils.sparse_molecular_dataset import SparseMolecularDataset
+from utils.molecular_metrics import MolecularMetrics
 from utils.utils import *
 
 import os
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
 
 def plot_images(epoch) :
     """
@@ -24,22 +25,20 @@ def plot_images(epoch) :
     fA, fX = generator(z)
     fake_logits = discriminator(fA[0], fX[0])
     fA, fX = np.argmax(fA[0], axis=-1), np.argmax(fX[0], axis=-1)
-    mols = [datas.matrices2mol(n_, e_, strict=True) for n_, e_ in zip(fX, fA)]
+    mols = [matrices2mol(n_, e_, strict=True) for n_, e_ in zip(fX, fA)]
     images = mols2grid_image(mols, 3)
     valid = MolecularMetrics.valid_total_score(mols)
-    #images.show()
     name = "results/result_" + str(epoch) + "_" + str(valid) + ".bmp"
     images.save(name)
     return valid
     
 # data
-datas = SparseMolecularDataset()
-datas.load('data/gdb9_9nodes.sparsedataset')
+A, X = get_molecules('data/gdb9.sdf')
 
 # random shuffle
-indexes = np.random.choice(len(datas.data_A), 5000, replace=False)
-A = datas.data_A[indexes]
-X = datas.data_X[indexes]
+indexes = np.random.choice(len(A), 10000, replace=False)
+A = A[indexes]
+X = X[indexes]
 
 A = tf.one_hot(A, depth=4, axis=3)
 X = tf.one_hot(X, depth=5, axis=2)
@@ -107,13 +106,13 @@ def train_step(molecules_A, molecules_X) :
     disc_train_loss(disc_loss)
     return gen_train_loss, disc_train_loss
 
-EPOCHS = 2
+EPOCHS = 20
 
 valids = []
 gen_losses = []
 disc_losses = []
 
-for epoch in range(1, EPOCHS + 1) :
+for epoch in range(0, EPOCHS) :
 
     print("Epoch : ", epoch)
     if epoch > 0 :

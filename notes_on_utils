@@ -1,0 +1,22 @@
+Les données :
+- Sont dans gdb9_9nodes.sparsedataset
+- on les charge avec SparseMolecularDataset.load
+
+SparseMolecularDataset :
+- utilise rdkit.Chem : permet de représenter / faire des opérations sur des molécules
+- load va mettre à jour tout un tas de choses, et on peut ensuite accéder à A et X avec data_A et data_X
+- data_A et data_X sont crées dans _generate_AX 
+- _generate_AX et appelée dans generate
+
+Alors en fait, quand on charge SparseMolecularDataset, il crée un objet SparseMolecularDataset, appel generate (génère data_A et data_X) et sauvegarde le tout dans gdb9_9nodes.sparsedataset
+QUAND __name__ == '__main__' !! Donc osef
+
+du coup est-ce que j'ai besoin d'appeler load ? Oui, car il update ses attributs avec __dict__.update, bref il faut l'appeler 
+
+Donc la question c'est : comment que __generate_AX marche ?
+- d'abord, comment generate marche ?
+  - on lui donne gdb9.sdf
+  - on crée self.data, qui contient des molécules crées avec Chem 
+- ensuite on appel generate_encoder_decoder : nécessaire pour gen_A et gen_X
+- enfin, generate_AX
+    - il génère A, X, S (smiles), D (degrés)
