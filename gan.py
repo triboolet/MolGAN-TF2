@@ -8,7 +8,6 @@ import numpy as np
 import loss
 import matplotlib.pyplot as plt
 
-from utils.molecular_metrics import MolecularMetrics
 from utils.utils import *
 
 import os
@@ -27,7 +26,7 @@ def plot_images(epoch) :
     fA, fX = np.argmax(fA[0], axis=-1), np.argmax(fX[0], axis=-1)
     mols = [matrices2mol(n_, e_, strict=True) for n_, e_ in zip(fX, fA)]
     images = mols2grid_image(mols, 3)
-    valid = MolecularMetrics.valid_total_score(mols)
+    valid = get_valid_scores(mols)
     name = "results/result_" + str(epoch) + "_" + str(valid) + ".bmp"
     images.save(name)
     return valid

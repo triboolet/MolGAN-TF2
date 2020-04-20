@@ -42,9 +42,10 @@ def matrices2mol(node_labels, edge_labels, strict=False):
 
 def mols2grid_image(mols, molsPerRow):
     mols = [e if e is not None else Chem.RWMol() for e in mols]
-
     for mol in mols:
         AllChem.Compute2DCoords(mol)
-
     return Draw.MolsToGridImage(mols, molsPerRow=molsPerRow, subImgSize=(150, 150))
 
+def get_valid_scores(mols) :
+    isValid = lambda x : x is not None and Chem.MolToSmiles(x) != ''
+    return np.array(list(map(isValid, mols)), dtype=np.float32).mean()
