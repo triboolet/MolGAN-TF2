@@ -14,6 +14,10 @@ import os
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
+try :
+    os.mkdir('results')
+except FileExistsError :
+    pass
 
 def plot_images(epoch) :
     """
